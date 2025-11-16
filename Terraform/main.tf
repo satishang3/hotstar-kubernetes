@@ -32,6 +32,7 @@ resource "aws_internet_gateway" "igw" {
 resource "aws_subnet" "public_subnet" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.0.1.0/24"
+  availability_zone       = "ap-south-1a"        # FIXED AZ
   map_public_ip_on_launch = true
 
   tags = {
@@ -67,7 +68,7 @@ resource "aws_security_group" "ec2_security_group" {
   vpc_id      = aws_vpc.main.id
 
   ingress {
-    description = "ssh access"
+    description = "SSH access"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
@@ -82,7 +83,7 @@ resource "aws_security_group" "ec2_security_group" {
   }
 
   tags = {
-    Name = "Monitoring server SG"
+    Name = "Monitoring-server-sg"
   }
 }
 
@@ -92,7 +93,7 @@ resource "aws_security_group" "ec2_security_group" {
 
 resource "aws_instance" "Monitoring_server" {
   ami                    = "ami-00bb6a80f01f03502"
-  instance_type          = "t2.medium"
+  instance_type          = "t3.medium"            # UPDATED INSTANCE TYPE
   subnet_id              = aws_subnet.public_subnet.id
   vpc_security_group_ids = [aws_security_group.ec2_security_group.id]
   key_name               = var.key_name
